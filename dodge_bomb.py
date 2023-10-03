@@ -1,6 +1,7 @@
 import sys
 import pygame as pg
 import random
+import time
 
 WIDTH, HEIGHT = 1600, 900
 
@@ -100,9 +101,10 @@ def main():
             txt = font.render("Game Over", True, (255, 0, 0))
             screen.blit(txt, [WIDTH/2-150, HEIGHT/2-100])
             pg.time.wait(300)
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    return
+            pg.display.update()
+            time.sleep(3)
+            return
+
 
         pg.display.update()
         tmr += 1
