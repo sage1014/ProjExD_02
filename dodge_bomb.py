@@ -22,32 +22,32 @@ def check_screen(obj_rct: pg.Rect):
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
-    screen = pg.display.set_mode((WIDTH, HEIGHT))
-    bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
-    font = pg.font.Font(None, 80)
-    mode = True
+    screen = pg.display.set_mode((WIDTH, HEIGHT))   #　スクリーンの設定
+    bg_img = pg.image.load("ex02/fig/pg_bg.jpg")    # 背景
+    font = pg.font.Font(None, 80)   # Game Over用のFont
+    mode = True # ゲームオーバーしているか
 
     """爆弾"""
-    bom_img = pg.Surface((20, 20))
+    bom_img = pg.Surface((20, 20))  # 爆弾の作成
     pg.draw.circle(bom_img, (255, 0, 0), (10, 10), 10)
-    bom_img.set_colorkey((0, 0, 0))
+    bom_img.set_colorkey((0, 0, 0)) # 余計な部分を透明
     bom_rect = bom_img.get_rect() # SurfaceからRectを抽出
-    x, y = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+    x, y = random.randint(0, WIDTH), random.randint(0, HEIGHT)  # 座標をランダム化
     bom_rect.center = (x, y)
-    vx, vy = +5, +5
+    vx, vy = +5, +5 # 移動量
 
     """こうかとん"""
-    kk_img = pg.image.load("ex02/fig/3.png")
+    kk_img = pg.image.load("ex02/fig/3.png")    # こうかとんの読み込み
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     kk_rct = kk_img.get_rect()
     kk_rct.center = (900, 400)
-    dmg_kk = pg.image.load("ex02/fig/8.png")
+    dmg_kk = pg.image.load("ex02/fig/8.png")    # ゲームオーバー用のこうかとん
     dmg_kk = pg.transform.rotozoom(dmg_kk, 0, 2.0)
 
 
     clock = pg.time.Clock()
 
-    tmr = 0
+    tmr = 0 # タイマー
     while True:
         if mode:
             for event in pg.event.get():
@@ -55,7 +55,7 @@ def main():
                     return
 
             """矢印キー判定(移動量)"""
-            delta = {
+            delta = {   # 矢印キーと移動量の辞書
             pg.K_UP:    (0, -5),
             pg.K_DOWN:  (0, +5),
             pg.K_LEFT:  (-5, 0),
@@ -70,13 +70,13 @@ def main():
 
             screen.blit(bg_img, [0, 0])
 
-            """こうかとん"""
+            """こうかとん"""    # こうかとんが画面外に行かないように
             kk_rct.move_ip(sum_mv[0], sum_mv[1])
             if check_screen(kk_rct) != (True, True):
                 kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
             screen.blit(kk_img, kk_rct)
 
-            """爆弾"""
+            """爆弾"""  # 爆弾の移動に関するプログラム
             bom_rect.move_ip(vx, vy)
             width, height = check_screen(bom_rect)
             if not width:
@@ -93,17 +93,17 @@ def main():
 
 
             """ゲームオーバー"""
-            if kk_rct.colliderect(bom_rect):
-                mode = False
+            if kk_rct.colliderect(bom_rect):    # こうかとんと爆弾が当たった時の処理
+                mode = False    # モード切り替え
         else:
-            screen.blit(bg_img, [0, 0])
+            screen.blit(bg_img, [0, 0]) # ゲームオーバー後の画面更新
             screen.blit(dmg_kk, [WIDTH/2-50, HEIGHT/2-50])
             txt = font.render("Game Over", True, (255, 0, 0))
             screen.blit(txt, [WIDTH/2-150, HEIGHT/2-100])
-            pg.time.wait(300)
+            pg.time.wait(300)   # ゲームの一時停止
             pg.display.update()
             time.sleep(3)
-            return
+            return  # 終了処理
 
 
         pg.display.update()
