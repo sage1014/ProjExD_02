@@ -22,6 +22,7 @@ def check_screen(obj_rct: pg.Rect):
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
+    bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     #screen = pg.display.set_mode((1680, 15))
 
     """爆弾"""
@@ -34,11 +35,10 @@ def main():
     vx, vy = +5, +5
 
     """こうかとん"""
-    bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
     kk_img = pg.transform.rotozoom(kk_img, 0, 2.0)
     kk_rct = kk_img.get_rect()
-    kk_rct.center = (x, y)
+    kk_rct.center = (900, 400)
     clock = pg.time.Clock()
 
     tmr = 0
@@ -55,13 +55,15 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
+
         for key, mv in delta.items():
             if key_lst[key]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
 
+
+
         screen.blit(bg_img, [0, 0])
-        #screen.blit(kk_img, [900, 400])
 
         """こうかとん"""
         kk_rct.move_ip(sum_mv[0], sum_mv[1])
@@ -77,6 +79,11 @@ def main():
         if not height:
             vy *= -1
         screen.blit(bom_img, bom_rect)
+
+        """ゲームオーバー"""
+        if kk_rct.colliderect(bom_rect):
+            print("ゲームオーバー")
+            return
 
         pg.display.update()
         tmr += 1
