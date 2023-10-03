@@ -4,17 +4,35 @@ import random
 
 WIDTH, HEIGHT = 1600, 900
 
+def check_screen(obj_rct: pg.Rect):
+    """
+    引数：こうかとんRectかばくだんRect
+    戻り値；タプル　（横方方向判定結果, 縦方向判定結果)
+    画面内ならTrue, 画面外ならFalse
+    """
+    width, height = True, True
+    if obj_rct.left < 0 or WIDTH < obj_rct.right:
+        width = False
+    if obj_rct.top < 0 or HEIGHT < obj_rct.bottom:
+        height = False
+
+    return width, height
+
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
+    #screen = pg.display.set_mode((1680, 15))
+
     """爆弾"""
-    enn = pg.Surface((20, 20))
-    pg.draw.circle(enn, (255, 0, 0), (10, 10), 10)
-    enn.set_colorkey((0, 0, 0))
-    bom_rect = enn.get_rect() # SurfaceからRectを抽出
+    bom_img = pg.Surface((20, 20))
+    pg.draw.circle(bom_img, (255, 0, 0), (10, 10), 10)
+    bom_img.set_colorkey((0, 0, 0))
+    bom_rect = bom_img.get_rect() # SurfaceからRectを抽出
     x, y = random.randint(0, WIDTH), random.randint(0, HEIGHT)
     bom_rect.center = (x, y)
+    vx, vy = +5, +5
+
     """こうかとん"""
     bg_img = pg.image.load("ex02/fig/pg_bg.jpg")
     kk_img = pg.image.load("ex02/fig/3.png")
@@ -47,11 +65,18 @@ def main():
 
         """こうかとん"""
         kk_rct.move_ip(sum_mv[0], sum_mv[1])
+        if check_screen(kk_rct) != (True, True):
+            kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
         screen.blit(kk_img, kk_rct)
 
         """爆弾"""
-        bom_rect.move_ip(5, 5)
-        screen.blit(enn, bom_rect)
+        bom_rect.move_ip(vx, vy)
+        width, height = check_screen(bom_rect)
+        if not width:
+            vx *= -1
+        if not height:
+            vy *= -1
+        screen.blit(bom_img, bom_rect)
 
         pg.display.update()
         tmr += 1
